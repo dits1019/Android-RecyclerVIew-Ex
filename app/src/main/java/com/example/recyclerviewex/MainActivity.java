@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         // 뷰 홀더를 마드는 과정에 LayoutInflater.from을 호출하여 레이아웃 R.layout.item_recylcerview에
         // 해당하는 뷰를 생성
         // 이후 생성된 뷰에 대한 정보를 가지고 있는 뷰 홀더를 생성
-        // 뷰 홀더는 아이템에 대한 뷰와 그와 관련된 메타데이터를 가지고 있는 객체
         @Override
         public MainRecyclerViewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recyclerview, parent, false);
@@ -51,7 +51,9 @@ public class MainActivity extends AppCompatActivity {
         // 다른 아이템을 위해 재사용 될 수 있음
         @Override
         public void onBindViewHolder(@NonNull @NotNull MainActivity.MainRecyclerViewViewHolder holder, int position) {
-
+            // 아이템 순번을 반영
+            // position은 아이템의 위치(순번)
+            holder.setTitle((position + 1) + "번째 아이템입니다.");
         }
 
         //리스트에 표시될 아이템 개수를 리턴
@@ -61,9 +63,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 뷰 홀더는 아이템에 대한 뷰와 그와 관련된 메타데이터를 가지고 있는 객체
     private static class MainRecyclerViewViewHolder extends RecyclerView.ViewHolder{
+        // 아이템 순번을 반영하가 위해서 아이템에 title을 가져옴
+        private final TextView title;
+
         public MainRecyclerViewViewHolder(View itemView){
             super(itemView);
+
+            title = itemView.findViewById(R.id.title);
+        }
+
+        public void setTitle(String title){
+            this.title.setText(title);
         }
     }
 
