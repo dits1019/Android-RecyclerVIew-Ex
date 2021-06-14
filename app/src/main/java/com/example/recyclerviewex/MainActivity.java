@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +27,15 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
 
+        // 어댑터는 화면에 표시될 내용을 다루고 레이아웃 매니저는 화면에 어떤 방식으로 나열될지 결정
+        // LinearLayoutManager로 배치되어 있고 이것은 순차적으로 배치되는 것을 의미
+        // 그 외 GridLayoutManager는 격자로 배치
+        // StaggeredGridLayoutManager는 크기가 다른 여러 요소를 격자로 배치
         recyclerView.setAdapter(new MainRecyclerViewAdapter());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.addItemDecoration(new DivideDecoration(this));
 
     }
 
@@ -76,6 +85,29 @@ public class MainActivity extends AppCompatActivity {
 
         public void setTitle(String title){
             this.title.setText(title);
+        }
+    }
+
+    private static class DivideDecoration extends RecyclerView.ItemDecoration {
+        private final Paint paint;
+
+        // 생성자에서 Paint 객체를 생성
+        public DivideDecoration(Context context){
+            paint = new Paint();
+            // 5dp의 두께를 설정
+            // dp 단위가 단말기마다 수치가 다르기 때문에 context.getResources().getDisplayMetrics().density를 이용해
+            // 단말기마다 다른 수치를 계산하도록 함
+            paint.setStrokeWidth(context.getResources().getDisplayMetrics().density * 5);
+        }
+
+        // onDraw 메서드는 각각의 뷰에서 어떻게 그려져야 할지 처리하는 메서드
+        // 이 메서드에 전달되는 parent를 통해 리시트에 표시되는 항목들을 가져오고 그 영역에 c.drawLine을 통해 선을 그음
+        @Override
+        public void onDraw(@NonNull @NotNull Canvas c, @NonNull @NotNull RecyclerView parent, @NonNull @NotNull RecyclerView.State state) {
+            for (int i = 0; i < parent.getChildCount(); i++){
+                final View view = parent.getChildAt(i);
+                c.drawLine(view.getLeft(), view.getBottom(), view.getRight(), view.getBottom(), paint);
+            }
         }
     }
 
